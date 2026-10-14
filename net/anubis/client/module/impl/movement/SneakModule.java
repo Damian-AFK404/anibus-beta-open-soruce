@@ -1,0 +1,40 @@
+package net.anubis.client.module.impl.movement;
+
+import net.anubis.client.module.ClientModule;
+import net.anubis.client.module.ModuleCategory;
+import net.anubis.client.module.setting.ModeSetting;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.class_310;
+import net.minecraft.class_746;
+
+@Environment(EnvType.CLIENT)
+public final class SneakModule extends ClientModule {
+   public static volatile SneakModule active;
+   private final ModeSetting mode = (ModeSetting)this.addSetting("mode", new ModeSetting("Mode", "Vanilla", new String[]{"Packet", "Vanilla"}));
+
+   public SneakModule() {
+      super("sneak", "Sneak", "Sneaks for you.", ModuleCategory.MOVEMENT);
+   }
+
+   protected void onEnable() {
+      active = this;
+   }
+
+   protected void onDisable() {
+      active = null;
+   }
+
+   public boolean doPacket() {
+      return this.isEnabled() && this.mode.is("Packet") && !isFlying();
+   }
+
+   public boolean doVanilla() {
+      return this.isEnabled() && this.mode.is("Vanilla") && !isFlying();
+   }
+
+   private static boolean isFlying() {
+      class_746 player = class_310.method_1551().field_1724;
+      return player == null || player.method_31549().field_7479;
+   }
+}
